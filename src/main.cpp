@@ -36,6 +36,8 @@ int main()
   double sigma_pos [3] = {0.3, 0.3, 0.01}; // GPS measurement uncertainty [x [m], y [m], theta [rad]]
   double sigma_landmark [2] = {0.3, 0.3}; // Landmark measurement uncertainty [x [m], y [m]]
 
+  int M = 100;
+
   // Read map data
   Map map;
   if (!read_map_data("../data/map_data.txt", map)) {
@@ -44,7 +46,7 @@ int main()
   }
 
   // Create particle filter
-  ParticleFilter pf;
+  ParticleFilter pf(M);
 
   h.onMessage([&pf,&map,&delta_t,&sensor_range,&sigma_pos,&sigma_landmark](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -126,6 +128,7 @@ int main()
 				best_particle = particles[i];
 			}
 			weight_sum += particles[i].weight;
+            //printf("%d %f\n", i, particles[i].weight);
 		  }
 		  cout << "highest w " << highest_weight << endl;
 		  cout << "average w " << weight_sum/num_particles << endl;
